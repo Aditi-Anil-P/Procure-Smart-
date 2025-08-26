@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Procure Smart Dashboard</title>
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #0d1b2a, #1b263b);
+      color: #e0f7fa;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    .top-buttons {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 10px;
+   
+    }
+
+   
+    .top-buttons a {
+      background: #00bcd4;
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-weight: 500;
+      box-shadow: 0 0 10px rgba(0, 188, 212, 0.6);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+
+    .top-buttons a:hover {
+      background: #00acc1;
+    }
+
+    @media(max-width:980px) {
+      .top-buttons a {
+        font-size: 0.7rem;
+      }
+    }
+
+
+    .header-box {
+      background: linear-gradient(to right, #212f45, #2c3e60);
+      box-shadow: 0 4px 15px rgba(0, 200, 255, 0.2);
+      padding: 2.5rem 1rem;
+      text-align: center;
+      border-bottom: 4px solid #0ef;
+    }
+
+    .header-box h2 {
+      font-weight: 700;
+      font-size: clamp(1.8rem, 3vw, 3rem);
+      background: linear-gradient(to right, #80d0c7, #0093e9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 10px;
+    }
+
+    .header-box p {
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      color: #d1ecf1;
+    }
+
+    .chart-buttons .btn {
+      margin: 12px 12px 12px 12px;
+      padding: 1rem;
+      background-color: #073b4c;
+      color: #ffffff;
+
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      font-weight: 600;
+      border-radius: 15px;
+      border: none;
+      transition: all 0.3s ease-in-out;
+      width: 100%;
+      max-width: fit-content;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+    }
+
+    .chart-buttons .btn:hover {
+      background-color: #042f3d;
+      transform: scale(1.03);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      color: #ffffff;
+    }
+
+    .chart-preview img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 2px solid #00cfff;
+      box-shadow: 0 0 20px rgba(0, 200, 255, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .card {
+      background: linear-gradient(to bottom, #1b263b, #0d1b2a);
+      border-radius: 15px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(0, 200, 255, 0.4);
+    }
+
+    .card-img-top {
+      max-height: 200px;
+      object-fit: contain;
+      padding: 10px;
+      background: #0d1b2a;
+    }
+
+
+    .chart-preview img:hover {
+      transform: scale(1.05);
+    }
+
+    h4 {
+      color: #90e0ef;
+      font-weight: 600;
+      margin-bottom: 20px;
+      margin-top: 40px;
+      font-size: clamp(1.4rem, 2vw, 1.8rem);
+    }
+
+    @media (max-width: 768px) {
+      .chart-buttons {
+        flex-direction: column !important;
+        align-items: center;
+      }
+
+      .logout-btn {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header-box position-relative">
+    <div class="top-buttons">
+      <a href="{{ url_for('home') }}">Upload Another File</a>
+      <a href="/logout">Logout</a>
+    </div>
+
+    <h2>Heyy {{user.name}}! Welcome to Procure Smart!</h2>
+    <p>Ready to generate charts?</p>
+  </div>
+
+
+  <!-- Buttons -->
+  <div class="container text-center mt-4">
+    <div class="d-flex justify-content-center flex-wrap chart-buttons">
+      <a href="/single_compare" class="btn">Compare single parameter for all companies</a>
+      <a href="/dual_compare" class="btn">Compare two parameters (equal weights)</a>
+      <a href="/weighted_compare" class="btn">Compare multiple parameters (custom weights)</a>
+    </div>
+  </div>
+
+  <!-- Chart Preview Section -->
+  <div class="container text-center">
+    <h4>Previously Generated Charts:</h4>
+    <div class="row justify-content-center">
+      {% if latest_charts %}
+      {% for chart in latest_charts %}
+      <div class="col-md-4 mb-4">
+        <div class="card bg-dark text-light shadow-sm p-3 h-100">
+          <img src="{{ chart }}" alt="Chart" class="img-fluid rounded">
+        </div>
+      </div>
+      {% endfor %}
+
+      {% else %}
+      <p>No charts generated yet. Try creating one!</p>
+      {% endif %}
+    </div>
+  </div>
+
+
+  </div>
+  </div>
+</body>
+
+</html>

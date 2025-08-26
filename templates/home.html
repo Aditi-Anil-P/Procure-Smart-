@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Procure Smart</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+
+  <!-- Font Awesome  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #0d0d2b, #1e1e3f, #2d2d5c);
+      min-height: 100vh;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+    }
+
+    .login-top-right {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .container-custom {
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+      padding-top: 100px;
+      padding-bottom: 40px;
+    }
+
+    .brand-title {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .tagline {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      color: #ccc;
+    }
+
+    .mode-btns .btn {
+      margin: 0.5rem;
+      min-width: 230px;
+      font-weight: 500;
+    }
+
+    .upload-box {
+      border: 2px dashed #888;
+      border-radius: 10px;
+      padding: 2rem;
+      margin: 1rem;
+      margin-bottom: 2rem;
+      background-color: rgba(255, 255, 255, 0.05);
+      color: #ccc;
+    }
+
+    .charts-section {
+      margin-top: 2rem;
+    }
+
+    .charts-section h5 {
+      margin-bottom: 1rem;
+      font-weight: 500;
+      color: #eee;
+    }
+
+    .charts-section .btn {
+      margin: 0.25rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top-right actions (dynamic based on login state) -->
+  <div class="login-top-right">
+    {% if session.get('email') %}
+      <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light">Dashboard</a>
+      <a href="{{ url_for('logout') }}" class="btn btn-outline-warning">Logout</a>
+    {% else %}
+      <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light">Log In</a>
+    {% endif %}
+  </div>
+
+  <!-- Main content -->
+  <div class="container-custom">
+    <div class="brand-title">Procure Smart</div>
+    <div class="tagline">Your guide to smarter choices and greater profits!</div>
+
+    <!-- Flash messages (removes queued flashes) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mt-2">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category=='danger' else category }} alert-dismissible fade show" role="alert" style="max-width: 720px; margin: 0 auto 12px;">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% if uploaded_file %}
+      <p class="text-success">Uploaded file: <strong>{{ uploaded_file | basename }}</strong></p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('home') }}" enctype="multipart/form-data">
+      <p>Upload Product Data (Excel Sheet)</p>
+      <input type="file" name="file" class="form-control w-50 mx-auto mb-3" required />
+      <button type="submit" class="btn btn-outline-light mt-2">
+        {% if uploaded_file %}Replace File{% else %}Upload File{% endif %}
+      </button>
+    </form>
+
+    <!-- Feature buttons -->
+    <div class="mode-btns mt-4">
+      <!-- If logged in , go straight to feature routes; else go to login -->
+      <a class="btn btn-warning"
+         href="{{ url_for('single_compare') if session.get('email') else url_for('auth.login') }}">
+        Compare single parameter
+      </a>
+      <a class="btn btn-success"
+         href="{{ url_for('dual_compare') if session.get('email') else url_for('auth.login') }}">
+        Compare dual parameters (equal weight)
+      </a>
+      <a class="btn btn-primary"
+         href="{{ url_for('weighted_compare') if session.get('email') else url_for('auth.login') }}">
+        Compare multiple parameters (custom weights)
+      </a>
+    </div>
+
+    <!-- Parameter tabs -->
+    <div class="charts-section">
+      <h5>Some popular checkpoints</h5>
+      <div>
+        <button class="btn btn-outline-light btn-sm" type="button">Price</button>
+        <button class="btn btn-outline-light btn-sm" type="button">Customer Rating</button>
+        <button class="btn btn-outline-light btn-sm" type="button">Delivery Period</button>
+        <button class="btn btn-outline-light btn-sm" type="button">Warranty</button>
+        <button class="btn btn-outline-light btn-sm" type="button">Guarantee</button>
+        <button class="btn btn-outline-light btn-sm" type="button">Product Lifetime</button>
+        <button class="btn btn-outline-light btn-sm" type="button">Exchange Span</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
