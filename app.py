@@ -101,19 +101,52 @@ def home():
     return render_template('home.html', uploaded_file=uploaded)
 
 
-@app.route('/check_login_and_redirect')
-def check_login_and_redirect():
+# app.py (Insert this code block after the /dashboard route)
+
+@app.route('/check_access/<feature>')
+def check_access(feature):
     """
-    When user clicks a feature after uploading:
-    - If not logged in -> go to login page (after login user can go to dashboard).
-    - If logged in -> go to dashboard directly.
+    Handles access for feature buttons (single_compare, dual_compare, weighted_compare).
+    Logic: 1. Check File? -> 2. Check Logged In?
     """
-    if 'email' not in session:
-        flash("Please log in to continue.", "info")
+    # 1) Check if file has been uploaded
+    if 'uploaded_file_path' in session:
+        # a) Yes? Check if user has logged in?
+        if session.get('user_id'):
+            # Yes? Redirect to feature page
+            return redirect(url_for(feature))
+        else:
+            # No? Redirect to login page, passing 'next' to return to the feature after login
+            flash('Please log in to proceed with your uploaded file.', 'info')
+            return redirect(url_for('auth.login', next=url_for(feature)))
+    else:
+        # b) No? Flash an error msg to upload a file.
+        flash("Please upload a file before accessing comparison features.", "danger")
+        return redirect(url_for('home'))
+
+
+# app.py (Corrected check_login_access function)
+
+@app.route('/check_login_access')
+def check_login_access():
+    """
+    Handles clicks on the 'Login' button.
+    Logic: 1. Check Logged In? -> 2. Check File?
+    """
+    # Safety check: if somehow logged in, go to dashboard
+    if session.get('user_id'):
+        return redirect(url_for('dashboard'))
+    
+    # 1) If not logged in, check for file
+    if session.get('uploaded_file_path'): 
+        # Yes? Proceed to login page (auth.login).
+        flash('Welcome back! Please log in to continue your work.', 'info')
         return redirect(url_for('auth.login'))
-    return redirect(url_for('dashboard'))
-
-
+    else:
+        # No? Flash an error msg to upload a file.
+        flash("Please upload a file before logging in.", "danger")
+        return redirect(url_for('home'))
+    
 @app.route('/dashboard')
 @login_required
 def dashboard():
@@ -429,4 +462,4 @@ def weighted_compare():
 
 # ===== Run app =====
 if __name__ == '__main__':
-    app.run()
+    app.run(debug = True)

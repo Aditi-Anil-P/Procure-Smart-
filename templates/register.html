@@ -6,10 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sign Up Page</title>
 
-  <!-- Bootstrap CSS -->
   <link href="/static/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Font Awesome for eye icon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
@@ -52,17 +50,28 @@
 <body class="text-center">
 
   <main class="form-signin w-100 m-auto">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
     <form method="POST" action="/register">
       <h1 class="h3 mb-3 fw-normal">Register your account</h1>
 
       <div class="form-floating mb-2">
-        <input type="text" name="name" class="form-control" id="floatingInput1" placeholder="text" required>
+        <input type="text" name="name" class="form-control" id="floatingInput1" placeholder="text" required value="{{ name if name is defined }}">
         <label for="floatingInput1">Name</label>
       </div>
 
       <div class="form-floating mb-2">
-        <input type="email" name="email" class="form-control" id="floatingInput2" placeholder="name@example.com" required>
-        <label for="floatingInput2">Email address</label>
+        <input type="text" name="username" class="form-control" id="floatingInput2" placeholder="Username" required value="{{ username if username is defined }}">
+        <label for="floatingInput2">Username</label>
       </div>
 
       <div class="form-floating mb-2 position-relative">

@@ -1,6 +1,8 @@
 import os
 import uuid
 import logging
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 from chart_utils import save_chart_metadata
