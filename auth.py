@@ -103,7 +103,9 @@ def login():
             # Otherwise, go to the default dashboard
             return redirect(url_for('dashboard'))
         else:
-            return render_template('login.html', error='Invalid username or password', username=username) # Pass username back
+            flash("Invalid username or password.", "danger")
+            return render_template('login.html', username=username)
+
             
     # GET request
     return render_template('login.html')
