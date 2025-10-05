@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procure Smart Guide</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        body {
+            /* Inherit background from base.html or use a dark background */
+            background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            color: #e0f7fa;
+            padding-bottom: 50px; /* Space for the footer/bottom */
+        }
+        .guide-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        .guide-container h2, .guide-container h4 {
+            color: #00bcd4; /* Accent color */
+            border-bottom: 2px solid rgba(0, 188, 212, 0.3);
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        .guide-container h5 {
+            color: #ff9800;
+            margin-top: 20px;
+        }
+        .guide-container p, .guide-container ul {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        /* Style for the 'Engineered for Precision' heading to make it pop */
+        .guide-container h4.text-warning {
+            color: #ffc107 !important; /* Vibrant yellow */
+            border-color: rgba(255, 193, 7, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark bg-dark px-3">
+      <a class="btn btn-outline-light" href="/">
+          <i class="fas fa-arrow-left"></i> Back to Home
+      </a>
+    </nav>
+
+    <div class="guide-container">
+        <h2 class="text-center">🚀 How to Use Procure Smart</h2>
+        <p class="text-center lead">Your data deserves more than spreadsheets. It deserves insight. This platform transforms raw data into visual intelligence.</p>
+
+        <hr>
+
+        <h4>🧩 Step 1: Upload Your Dataset</h4>
+        <p>Start by uploading a structured `.csv`, `.xls`, or `.xlsx` file containing the entities you wish to compare. Your file should include clearly labeled numerical columns—these will become the backbone of your analysis.</p>
+
+        <h4>🔐 Step 2: Authenticate</h4>
+        <p>Once your file is uploaded, <strong>log in or create an account</strong>. Procure Smart uses secure authentication. Upon login, you’ll be directed to your personalized dashboard.</p>
+
+        <h4>🧭 Step 3: Navigate the Dashboard</h4>
+        <p>Your dashboard is your command center. Here, you’ll find:</p>
+        <ul>
+            <li>Access to all comparison modes</li>
+            <li>Your three most recently generated charts</li>
+            <li>Options to upload a new file or log out (top-right corner)</li>
+        </ul>
+        <p>To save a chart, simply right-click and select “Save Image.”</p>
+
+        <hr>
+        
+        <h3 class="text-primary">✨ Comparison Modes That Redefine Insight</h3>
+        
+        <h5>1️⃣ Single Compare</h5>
+        <p>Compare entities based on one parameter. Choose between a <strong>Scatter Plot</strong> or <strong>Bar Graph</strong>. You can set a min/max range, select your preference (“Higher is better” or “Lower is better”), and limit the number of entities displayed (default: top 20).</p>
+        
+        <h5>2️⃣ Dual Compare</h5>
+        <p>Compares two parameters side-by-side using a <strong>Dual-Axis Bar Chart</strong>. The values are normalized and scaled for direct visual comparison, even if they have different units or magnitudes.</p>
+        
+        <h5>3️⃣ Multi Compare (Custom Weights)</h5>
+        <p>Generate a composite score using multiple weighted parameters, visualized in a <strong>Stacked Bar Chart</strong>. Choose up to 5 parameters, assign custom weights (auto-normalized to 100%), and set min/max ranges. The chart shows the total score (scaled 0–10) with color-coded contributions from each parameter.</p>
+        
+        <hr>
+        
+        <h4 class="text-warning">⚙️ Engineered for Precision</h4>
+        <p>Behind the scenes, Procure Smart ensures data integrity:</p>
+        <ul>
+            <li><strong>Data Cleaning:</strong> Strips currency symbols, commas, and other formatting noise.</li>
+            <li><strong>Smart Headers:</strong> Automatically identifies numerical fields for comparison.</li>
+            <li><strong>Chart Memory:</strong> Stores metadata for your last three charts.</li>
+        </ul>
+        
+        <p class="text-center mt-4">Procure Smart isn’t just a tool—it’s a launchpad for decision-making. Happy comparing!</p>
+        
+    </div>
+</body>
+</html>

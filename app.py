@@ -101,7 +101,10 @@ def home():
     return render_template('home.html', uploaded_file=uploaded)
 
 
-# app.py (Insert this code block after the /dashboard route)
+@app.route('/guide')
+def guide():
+    """Renders the detailed 'How to Use' guide page."""
+    return render_template('guide.html')
 
 @app.route('/check_access/<feature>')
 def check_access(feature):

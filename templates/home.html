@@ -21,6 +21,26 @@
       margin: 0;
     }
 
+    .info-top-left {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      z-index: 10;
+
+    }
+
+    .info-top-left .btn-outline-info {
+      border-color: #00bcd4;
+     
+      color: #00bcd4;
+      font-weight: 500;
+    }
+
+    .info-top-left .btn-outline-info:hover {
+      background-color: #00bcd4;
+      color: #fff;
+    }
+
     .login-top-right {
       position: absolute;
       top: 20px;
@@ -83,6 +103,12 @@
 
 <body>
 
+  <div class="info-top-left">
+    <a href="{{ url_for('guide') }}" class="btn btn-outline-info">
+      <i class="fas fa-rocket"></i> Get Started
+    </a>
+  </div>
+
   <!-- Top-right actions (dynamic based on login state) -->
   <div class="login-top-right">
     {% if session.get('user_id') %}
@@ -128,16 +154,13 @@
     <!-- Feature buttons -->
     <div class="mode-btns mt-4">
       <!-- If logged in , go straight to feature routes; else go to login -->
-      <a class="btn btn-warning"
-        href="{{ url_for('check_access', feature='single_compare') }}">
+      <a class="btn btn-warning" href="{{ url_for('check_access', feature='single_compare') }}">
         Compare single parameter
       </a>
-      <a class="btn btn-success"
-        href="{{ url_for('check_access', feature='dual_compare') }}">
+      <a class="btn btn-success" href="{{ url_for('check_access', feature='dual_compare') }}">
         Compare dual parameters (equal weight)
       </a>
-      <a class="btn btn-primary"
-        href="{{ url_for('check_access', feature='weighted_compare') }}">
+      <a class="btn btn-primary" href="{{ url_for('check_access', feature='weighted_compare') }}">
         Compare multiple parameters (custom weights)
       </a>
     </div>
