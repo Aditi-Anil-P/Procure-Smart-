@@ -1,185 +1,68 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Procure Smart</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log In Page</title>
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="static/css/bootstrap.min.css" />
-
-  <!-- Font Awesome  -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
     body {
-      background: linear-gradient(135deg, #0d0d2b, #1e1e3f, #2d2d5c);
-      min-height: 100vh;
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-    }
-
-    .info-top-left {
-      position: absolute;
-      top: 20px;
-      left: 30px;
-      z-index: 10;
-
-    }
-
-    .info-top-left .btn-outline-info {
-      border-color: #00bcd4;
-     
-      color: #00bcd4;
-      font-weight: 500;
-    }
-
-    .info-top-left .btn-outline-info:hover {
-      background-color: #00bcd4;
-      color: #fff;
-    }
-
-    .login-top-right {
-      position: absolute;
-      top: 20px;
-      right: 30px;
       display: flex;
-      gap: 10px;
-    }
-
-    .container-custom {
-      text-align: center;
-      max-width: 900px;
-      margin: 0 auto;
-      padding-top: 100px;
+      align-items: center;
+      padding-top: 40px;
       padding-bottom: 40px;
+      background-color: #f5f5f5;
+      min-height: 100vh;
     }
 
-    .brand-title {
-      font-size: 3rem;
-      font-weight: bold;
-      color: #ffffff;
+    .form-signin {
+      max-width: 330px;
+      margin: 15px;
+      padding: 5px;
     }
 
-    .tagline {
-      font-size: 1.25rem;
-      margin-bottom: 2rem;
-      color: #ccc;
-    }
-
-    .mode-btns .btn {
-      margin: 0.5rem;
-      min-width: 230px;
-      font-weight: 500;
-    }
-
-    .upload-box {
-      border: 2px dashed #888;
-      border-radius: 10px;
-      padding: 2rem;
-      margin: 1rem;
-      margin-bottom: 2rem;
-      background-color: rgba(255, 255, 255, 0.05);
-      color: #ccc;
-    }
-
-    .charts-section {
-      margin-top: 2rem;
-    }
-
-    .charts-section h5 {
-      margin-bottom: 1rem;
-      font-weight: 500;
-      color: #eee;
-    }
-
-    .charts-section .btn {
-      margin: 0.25rem;
+    .form-signin .form-floating:focus-within {
+      z-index: 2;
     }
   </style>
 </head>
 
-<body>
+<body class="text-center">
 
-  <div class="info-top-left">
-    <a href="{{ url_for('guide') }}" class="btn btn-outline-info">
-      <i class="fas fa-rocket"></i> Get Started
-    </a>
-  </div>
-
-  <!-- Top-right actions (dynamic based on login state) -->
-  <div class="login-top-right">
-    {% if session.get('user_id') %}
-    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light">Dashboard</a>
-    <a href="{{ url_for('logout') }}" class="btn btn-outline-warning">Logout</a>
-    {% else %}
-    <a href="{{ url_for('check_login_access') }}" class="btn btn-outline-light">Log In</a>
-    {% endif %}
-  </div>
-
-  <!-- Main content -->
-  <div class="container-custom">
-    <div class="brand-title">Procure Smart</div>
-    <div class="tagline">Your guide to smarter choices and greater profits!</div>
-
-    <!-- Flash messages (removes queued flashes) -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="mt-2">
+  <main class="form-signin w-100 m-auto">
+    <form method="POST" action="/login">
+      <h1 class="h3 mb-3 fw-normal">Log in to your account</h1>
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
       {% for category, message in messages %}
-      <div class="alert alert-{{ 'danger' if category=='danger' else category }} alert-dismissible fade show"
-        role="alert" style="max-width: 720px; margin: 0 auto 12px;">
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
         {{ message }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
-
-    {% if uploaded_file %}
-    <p class="text-success">Uploaded file: <strong>{{ uploaded_file | basename }}</strong></p>
-    {% endif %}
-
-    <form method="POST" action="{{ url_for('home') }}" enctype="multipart/form-data">
-      <p>Upload Product Data (Excel Sheet)</p>
-      <input type="file" name="file" class="form-control w-50 mx-auto mb-3" required />
-      <button type="submit" class="btn btn-outline-light mt-2">
-        {% if uploaded_file %}Replace File{% else %}Upload File{% endif %}
-      </button>
-    </form>
-
-    <!-- Feature buttons -->
-    <div class="mode-btns mt-4">
-      <!-- If logged in , go straight to feature routes; else go to login -->
-      <a class="btn btn-warning" href="{{ url_for('check_access', feature='single_compare') }}">
-        Compare single parameter
-      </a>
-      <a class="btn btn-success" href="{{ url_for('check_access', feature='dual_compare') }}">
-        Compare dual parameters (equal weight)
-      </a>
-      <a class="btn btn-primary" href="{{ url_for('check_access', feature='weighted_compare') }}">
-        Compare multiple parameters (custom weights)
-      </a>
-    </div>
-
-    <!-- Parameter tabs -->
-    <div class="charts-section">
-      <h5>Some popular checkpoints</h5>
-      <div>
-        <button class="btn btn-outline-light btn-sm" type="button">Price</button>
-        <button class="btn btn-outline-light btn-sm" type="button">Customer Rating</button>
-        <button class="btn btn-outline-light btn-sm" type="button">Delivery Period</button>
-        <button class="btn btn-outline-light btn-sm" type="button">Warranty</button>
-        <button class="btn btn-outline-light btn-sm" type="button">Guarantee</button>
-        <button class="btn btn-outline-light btn-sm" type="button">Product Lifetime</button>
-        <button class="btn btn-outline-light btn-sm" type="button">Exchange Span</button>
+      {% endif %}
+      {% endwith %}
+      <div class="form-floating mb-2">
+        <input type="text" name="username" class="form-control" id="floatingInput" placeholder="Username" value="{{ username if username is defined }}">
+        <label for="floatingInput">Username</label>
       </div>
-    </div>
-  </div>
+      <div class="form-floating mb-3">
+        <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
+        <label for="floatingPassword">Password</label>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2">
+        <button class="btn btn-primary" type="submit">Log in</button>
+        <a href="/register" class="btn btn-outline-secondary">Register</a>
+      </div>
+    </form>
+  </main>
 
   <script src="/static/js/bootstrap.bundle.min.js"></script>
+</body>
 
 </html>
