@@ -15,14 +15,26 @@ GRAPH_FOLDER = os.path.join("static", "graphs")
 os.makedirs(GRAPH_FOLDER, exist_ok=True)
 
 
-def scale(data, reverse=False):
-    min_val, max_val = np.nanmin(data), np.nanmax(data)
-    if max_val - min_val == 0:
+def scale_fixed(data, local_min, local_max, reverse=False):
+    """
+    Scales data based on the provided LOCAL min/max to a 0-10 range.
+    
+    If data point X is outside the [local_min, local_max] range, its score 
+    will be < 0 or > 10, maintaining the linearity of the scale.
+    """
+    if local_max - local_min == 0:
         return [0] * len(data)
+    
+    # Calculate scale (0.0 to 1.0, but can go outside this range)
     if reverse:
-        return [1 - (x - min_val) / (max_val - min_val) for x in data]
+        # For lower=better: Score = 1 - Normalized
+        normalized = [1 - (x - local_min) / (local_max - local_min) for x in data]
     else:
-        return [(x - min_val) / (max_val - min_val) for x in data]
+        # For higher=better: Score = Normalized
+        normalized = [(x - local_min) / (local_max - local_min) for x in data]
+        
+    # Convert to 0-10 scale
+    return [n * 10 for n in normalized]
 
 
 def generate_weighted_compare_chart(file_path, params, weights, preferences, ranges,
@@ -50,7 +62,8 @@ def generate_weighted_compare_chart(file_path, params, weights, preferences, ran
         working[p] = numeric_df[p]
     working = working.dropna(subset=params)
 
-    # Apply per-parameter ranges
+   
+    # We now filter the rows based on the user-defined ranges
     for idx, p in enumerate(params):
         min_val, max_val = ranges[idx]
         if min_val is not None:
@@ -67,17 +80,28 @@ def generate_weighted_compare_chart(file_path, params, weights, preferences, ran
         raise ValueError("Sum of weights must be greater than 0.")
     weights = [w / total_weight for w in weights]
 
-    # Compute weighted score 
+    #  COMPUTE SCORES USING LOCAL RANGES
     scores_per_param = []
+    
     for idx, p in enumerate(params):
         reverse = (preferences[idx] == "lower")
-        scaled = scale(working[p].tolist(), reverse=reverse)
-        weighted = [s * weights[idx] for s in scaled]
-        scores_per_param.append(weighted)
+        #USE USER-DEFINED MIN/MAX FOR SCALING ---
+        local_min, local_max = ranges[idx] 
+        
+        # default specify min/max
+        if local_min is None: local_min = working[p].min()
+        if local_max is None: local_max = working[p].max()
+        
+        # Scale to 0-10. A value equal to local_min is 0, local_max is 10.
+        scaled_values = scale_fixed(working[p].tolist(), local_min, local_max, reverse=reverse)
+        
+        # Apply Weight
+        weighted_component = [s * weights[idx] for s in scaled_values]
+        scores_per_param.append(weighted_component)
 
     working["WeightedScore"] = np.sum(scores_per_param, axis=0)
 
-    # Apply global weighted score filter
+    # --- STEP 3: FILTER BY WEIGHTED SCORE ---
     if min_score is not None:
         working = working[working["WeightedScore"] >= min_score]
     if max_score is not None:
@@ -89,19 +113,27 @@ def generate_weighted_compare_chart(file_path, params, weights, preferences, ran
     # Sort and truncate
     working = working.sort_values(by="WeightedScore", ascending=False).head(top_n)
 
-    # Recompute contributions for trimmed set 
+    # --- STEP 4: PREPARE FINAL PLOT DATA ---
     contribs = []
     for idx, p in enumerate(params):
         reverse = (preferences[idx] == "lower")
-        scaled = scale(working[p].tolist(), reverse=reverse)
+        local_min, local_max = ranges[idx]
+        
+        # Fallback check again
+        if local_min is None: local_min = working[p].min()
+        if local_max is None: local_max = working[p].max()
+
+        # Recalculate contributions for the final top N
+        scaled = scale_fixed(working[p].tolist(), local_min, local_max, reverse=reverse)
         weighted = [s * weights[idx] for s in scaled]
         contribs.append(weighted)
 
-    #  Plot (stacked contributions)
+    # Plot (stacked contributions)
     apply_dark_theme()
     labels = working[label_col].astype(str).tolist()
 
-    colors = ["#FF6F61", "#FFD54F", "#4FC3F7", "#81C784", "#BA68C8"]  # bright colors to distinguish per paramter contribution
+    colors = ["#FF6F61", "#FFD54F", "#4FC3F7", "#81C784", "#BA68C8"]
+    
     fig_width = max(10, min(24, 0.7 * len(labels)))
     fig, ax = plt.subplots(figsize=(fig_width, 6))
 
@@ -111,9 +143,12 @@ def generate_weighted_compare_chart(file_path, params, weights, preferences, ran
                color=colors[idx % len(colors)], label=params[idx])
         bottom += contrib
 
-    ax.set_ylabel("Weighted Score")
-    ax.set_title("Weighted Parameter Comparison (Stacked by Parameter)")
+    ax.set_ylabel("Weighted Score (0-10 Local Scale)")
+    ax.set_title("Weighted Parameter Comparison (Scale 0-10 based on Input Ranges)")
     plt.xticks(rotation=90)
+    
+    # Set Y limit based on the total possible score (10.0)
+    plt.ylim(0, 10)
 
     # White legend text
     legend = ax.legend(title="Parameters", bbox_to_anchor=(1.05, 1), loc="upper left")
@@ -127,6 +162,6 @@ def generate_weighted_compare_chart(file_path, params, weights, preferences, ran
     full_path = os.path.join(GRAPH_FOLDER, filename)
     plt.savefig(full_path, facecolor=plt.gcf().get_facecolor())
     plt.close()
-    save_chart_metadata(filename,limit=3)
+    save_chart_metadata(filename, limit=3)
     logging.info("Saved weighted compare chart to %s", full_path)
     return filename
