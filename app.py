@@ -281,7 +281,6 @@ def single_compare():
             return render_template('single_compare.html', headers=headers, chart_url=chart_url)
         except Exception as e:
             logging.exception("Error generating scatter plot")
-            flash(f"Error generating scatter plot: {e}", "danger")
             return render_template('single_compare.html', headers=headers)
 
     # Else: generate bar chart
@@ -299,7 +298,7 @@ def single_compare():
         return render_template('single_compare.html', headers=headers, chart_url=chart_url)
     except Exception as e:
         logging.exception("Error generating bar chart")
-        flash(f"Error generating bar chart: {e}", "danger")
+        
         return render_template('single_compare.html', headers=headers)
 
 @app.route('/dual_compare', methods=['GET', 'POST'])
@@ -369,7 +368,7 @@ def dual_compare():
             flash("Dual parameter chart generated successfully.", "success")
         except Exception as e:
             logging.exception("Error generating dual parameter chart")
-            flash(f"Error generating dual parameter chart: {e}", "danger")
+            
 
     return render_template('dual_compare.html', headers=headers, chart_url=chart_url)
 

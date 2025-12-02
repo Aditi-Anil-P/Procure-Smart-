@@ -64,8 +64,8 @@
 
             <!-- Top N Companies -->
             <div class="mb-2">
-              <label for="top_n">Number of Companies</label>
-              <input type="number" min="1" max="25" name="top_n" id="top_n" class="form-control" value="10">
+              <label for="top_n">Number of Products/Companies</label>
+              <input type="number" min="1" max="20" name="top_n" id="top_n" class="form-control" value="10">
             </div>
 
             <button class="btn btn-info w-100" type="submit">Compare</button>
@@ -120,7 +120,7 @@
 
             <!-- Top N Companies-->
             <div class="mb-2">
-              <label for="top_n_mobile">Number of Companies</label>
+              <label for="top_n_mobile">Number of Products/Companies</label>
               <input type="number" min="1" max="25" name="top_n" id="top_n_mobile" class="form-control" value="10">
             </div>
 
@@ -150,7 +150,7 @@
           <h4>Result</h4>
           <img src="{{ chart_url }}" alt="Dual Parameter Chart" class="img-fluid" />
           {% else %}
-          <p class="text-muted">No chart yet. Select both parameters and press <strong>Compare</strong>.</p>
+          <p  id ="sing_comp_err_msg">No chart yet. Select both parameters, range and press <strong>Compare</strong>.</p>
           {% endif %}
           {% if chart_url %}
           <div class="mt-3 d-flex gap-3 justify-content-center">

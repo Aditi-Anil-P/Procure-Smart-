@@ -19,7 +19,7 @@ const toolbarHTML = `
   <input type="number" class="form-control" placeholder="e.g. 1000">
 
   <label>Number of Companies</label>
-  <input type="number" class="form-control" min="1" max="20" placeholder="Max 20">
+  <input type="number" class="form-control" min="1" max="25" placeholder="Max 25">
 `;
 
 // Render toolbars
