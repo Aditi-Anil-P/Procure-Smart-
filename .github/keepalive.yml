@@ -1,0 +1,13 @@
+name: Keep Render Active
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # runs every 10 minutes
+  workflow_dispatch:
+
+jobs:
+  ping-render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render service
+        run: curl -s https://procure-smart-o3x4.onrender.com > /dev/null
